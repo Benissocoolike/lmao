@@ -1,71 +1,65 @@
 #pragma once
-// structure definitions and function prototypes
-// for the battleship assignment
+// class definitions for battleship assignment
 // Mikhail Nesterenko
-// 10/24/2017
+// 10/28/2017
 
 #include <cstdlib>
 #include <ctime>
 
-
 #ifndef BATTLESHIP_H_
 #define BATTLESHIP_H_
 
-//
-// data structures definitions
-//
+// coordinates (location) of the ship and shots
+class Location {
+public:
+	Location(); // void constructor, assigns -1 to X coord, and * to Y coord 
+	void pick(); // picks a random location
+	void fire(); // asks the user to input coordinates of the next shot
+	void print() const; // prints location in format "a1"
 
-const int fleetSize = 6; // number of battleships
-const int fieldSize = 5;  // the field (ocean) is fieldSize * fieldSize
+						// predicate returns true if the two locations match
+	friend bool compare(const Location&, const Location&);
 
-						  // coordinates (Location) of the ship and shots
-struct Location {
+private:
+	static const int fieldSize = 5; // the field (ocean) is fieldSize X fieldSize
 	int x;  // 1 through fieldSize
 	char y; // 'a' through fieldSize
 };
 
-// contains ship's coordinates (Location) and whether is was sunk
-struct Ship {
+// contains ship's coordinates (location) and whether is was sunk
+class Ship {
+public:
+	Ship(); // void constructor, sets sunk=false
+	bool match(const Location&) const; // returns true if this location matches
+									   // the ship's location
+	bool isSunk() const { return sunk; } // checks to see if the ship is sunk
+	void sink();       // sets "sunk" member variable of the ship to true
+	void setLocation(const Location&); // deploys the ship at the specified location
+	void printShip() const; // prints location and status of the ship
+
+private:
 	Location loc;
 	bool sunk;
 };
 
-//
-// initialization functions
-//
-void initialize(Ship[]); // places every Ship in a Location where x-coordinate is -1
-						 // and y-coordinate is '*' (a star) to signify
-						 // that the Ship is not deployed
+// contains the fleet of the deployed ships
+class Fleet {
+public:
+	void deployFleet(); // deploys the ships in random locations
+						// of the ocean
+	bool operational() const; // predicate returns true if at least
+							  // one ship in the fleet is not sunk
+	bool isHitNSink(const Location &); // returns true if there was a deployed
+									   // ship at this location (hit) and sinks it
+									   // otherwise returns false (miss)
+	void printFleet() const; // prints out locations of ships in fleet
 
-Location pick(); // generates a random Location
-bool match(const Ship, Location); // returns true if this Location matches
-								  // the Location of the Ship
-								  // returns false otherwise
-int check(const Ship[], Location); // returns the index of element of the array
-								   // that matches the Location
-								   // returns -1 if none do
-								   // uses match()
-void deploy(Ship[]); // places an array of battleships in
-					 // random Locations in the ocean
-
-					 //
-					 // display functions
-					 //
-void printShip(const Ship); // prints the Location and status (sunk or not) 
-							// of a single ship
-void printFleet(const Ship[]); // prints the Locations of all the ships and 
-							   // whether they are sunk
-
-
-							   //
-							   // battle functions 
-							   //
-bool operational(const Ship[]);  // returns true if at least one ship in the array
-								 // is not sunk
-Location fire();           // asks the user to input the coordinates of the next
-						   // shot
-						   // note that check() is also used in the battle
-
-void sink(Ship&);          // sets "sunk" member variable of the ship to true
+private:
+	static const int fleetSize = 6; // number of battleships
+	int check(const Location &) const;  // returns index of the ship 
+										// that matches location
+										// -1 if none match
+	Ship ships[fleetSize];        // battleships of the fleet
+};
 
 #endif /* BATTLESHIP_H_ */

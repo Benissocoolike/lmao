@@ -1,115 +1,79 @@
-//Benjamin Bartow
-//11/03/2017
-//Function definitions for battleship program
+//Definitions for functions in battleship assignment
+//Ben
+//11/08/2017
 
-#include "battleship.h"
 #include <iostream>
-using std::cout; using std::cin; using std::endl;
+#include "battleship.h"
+using std::cout; using std::cin;
 
-void initialize(Ship a[])
+Location::Location() 
 {
-	for (int i = 0; i < fleetSize; ++i)
-	{
-		a[i].loc.x = -1;
-		a[i].loc.y = '*';
-	}	
+	x = -1;
+	y = '*';
 }
 
-Location pick() 
+void Location::pick()
 {
-	Location loc;
 	switch (rand() % fieldSize)
 	{
-	case 0: loc.x = 1; break; 
-	case 1: loc.x = 2; break; 
-	case 2: loc.x = 3; break; 
-	case 3: loc.x = 4; break; 
-	case 4: loc.x = 5; break; 
+	case 0: x = 1; break;
+	case 1: x = 2; break;
+	case 2: x = 3; break;
+	case 3: x = 4; break;
+	case 4: x = 5; break;
 	}
-	
+
 	switch (rand() % fieldSize)
 	{
-	case 0: loc.y = 'a'; break; 
-	case 1: loc.y = 'b'; break; 
-	case 2: loc.y = 'c'; break; 
-	case 3: loc.y = 'd'; break; 
-	case 4: loc.y = 'e'; break; 
+	case 0: y = 'a'; break;
+	case 1: y = 'b'; break;
+	case 2: y = 'c'; break;
+	case 3: y = 'd'; break;
+	case 4: y = 'e'; break;
 	}
-	return loc;
 }
 
-Location fire()
+void Location::fire() 
 {
-	Location loc;
 	cout << "Input a x coordinate from 1 to 5: ";
-	cin >> loc.x;
+	cin >> x;
 	cout << "Input a y coordinate from a to e: ";
-	cin >> loc.y;
-	return loc;
+	cin >> y;
 }
 
-bool match(const Ship a, Location l)
+void Location::print() const
 {
-	if ((a.loc.x == l.x) && (a.loc.y == l.y))
+	cout << x << y;
+}
+
+bool compare(const Location& a, const Location& b)
+{
+	if((a.x == b.x) && (a.y == b.y))
+	{
 		return true;
+	}
 	else
+	{
 		return false;
-}
-
-int check(const Ship a[], Location l)
-{
-	for (int i = 0; i < fleetSize; ++i)
-	{
-		if (match(a[i], l) == true)
-			return i;
-	}
-	return -1;
-}
-
-void deploy(Ship a[])
-{
-	for (int i = 0; i < fleetSize; ++i)
-	{
-		Location l = pick();
-		while (check(a, l) != -1)
-		{
-			l = pick();
-		}
-		a[i].loc = l;
-		a[i].sunk = false;
 	}
 }
 
-void printShip(const Ship a)
+Ship::Ship()
 {
-	cout << "Ship location: " << a.loc.x << a.loc.y << " and is: ";
-	if (a.sunk == true)
-		cout << "sunk" << endl;
-	else
-		cout << "afloat" << endl;
+	sunk = false;
 }
 
-void printFleet(const Ship a[])
+bool Ship::match(const Location& a) const
 {
-	for (int i = 0; i < fleetSize; ++i)
-	{
-		printShip(a[i]);
-	}
+	return compare(a, loc);
 }
 
-bool operational(const Ship a[])
+void Ship::sink()
 {
-	for (int i = 0; i < fleetSize; ++i)
-	{
-		if (a[i].sunk != true) //afloat
-		{ return true; }       //operational
-		else
-		{ continue; }
-	}
-	return false;
+	sunk = true;
 }
 
-void sink(Ship& a) 
+void Ship::setLocation(const Location& a)
 {
-	a.sunk = true;
+	
 }
